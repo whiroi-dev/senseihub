@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Associação Ribeiro de Karatê (Karatê-Dô Kenshikai)</title>
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#d42b2b', secondary: '#fea9a9' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900 antialiased selection:bg-primary selection:text-white">
+
+    
+    <header class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-white/20 shadow-sm transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+        <div class="flex-shrink-0 flex items-center">
+          <img src="https://kenshikai.com.br/uploads/academies/acad_6941a7d61ce9b.png" alt="Associação Ribeiro de Karatê (Karatê-Dô Kenshikai)" class="h-12 w-auto object-contain cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})" />
+        </div>
+        <nav class="hidden lg:flex items-center space-x-6">
+          <a href="#modalidades" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Modalidades</a><a href="#beneficios" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Benefícios</a><a href="#grade" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Horários</a><a href="#galeria" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Galeria</a><a href="#planos" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Planos</a><a href="#historia" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Nossa História</a><a href="#equipe" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Equipe</a><a href="#depoimentos" class="text-sm font-bold text-gray-500 hover:text-primary transition-all uppercase tracking-wide pb-1">Depoimentos</a>
+        </nav>
+        <div class="flex items-center ml-auto lg:ml-4">
+          <a href="#" class="flex items-center text-sm font-bold text-gray-600 hover:text-primary transition-colors mr-2 md:mr-4 bg-gray-100 hover:bg-gray-200 px-3 md:px-4 py-2 rounded-full">
+            <i data-lucide="user" class="w-4 h-4 md:mr-1.5"></i> <span class="hidden md:inline">Área do Aluno</span>
+          </a>
+          <button onclick="openLeadModal()" class="group relative inline-flex items-center justify-center bg-primary text-white font-bold py-2 px-4 md:px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm md:text-base flex-shrink-0 overflow-hidden">
+            <i data-lucide="message-circle" class="w-4 h-4 md:w-5 md:h-5 md:mr-2 relative z-10"></i> <span class="hidden md:inline relative z-10">Contato</span>
+          </button>
+        </div>
+      </div>
+    </header>
+  
+    
+    <main>
+      
+    <section class="relative min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white px-6 pt-24 pb-16 overflow-hidden" style="background-image: url(https://cdn6.campograndenews.com.br/uploads/noticias/2022/03/14/6powsx3n6ek1.jpeg); background-size: cover; background-position: center; background-attachment: fixed;">
+      <div class="absolute inset-0 bg-black/60 z-0"></div>
+      
+      <div class="relative z-10 flex flex-col items-center max-w-5xl w-full mt-[-4rem] md:mt-0">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 text-center transition-all duration-500 ease-in-out leading-tight text-white" style="text-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+          Associação Ribeiro de Karatê (Karatê-Dô Kenshikai)
+        </h1>
+        <p class="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-12 text-center font-medium max-w-3xl leading-relaxed text-gray-100" style="text-shadow: 0 2px 8px rgba(0,0,0,0.6);">
+          Transformando vidas através do esporte
+        </p>
+        <button onclick="openLeadModal()" class="w-full md:w-auto bg-primary text-white font-bold text-lg md:text-xl py-4 md:py-5 px-10 md:px-14 rounded-full shadow-xl hover:shadow-2xl hover:opacity-90 transition-all duration-300 transform hover:-translate-y-1">
+          Agende uma Aula
+        </button>
+      </div>
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer opacity-70 hover:opacity-100 transition-opacity z-10">
+        <i data-lucide="chevron-down" class="w-10 h-10 md:w-12 md:h-12 text-primary animate-bounce"></i>
+      </div>
+    </section>
+  
+      
+      
+    <section id="modalidades" class="py-24 bg-white">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-extrabold text-primary mb-4">Nossas Modalidades</h2>
+          <div class="w-24 h-1 bg-primary mx-auto rounded"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          
+            <div class="bg-secondary bg-opacity-20 rounded-2xl p-8 shadow-sm hover:shadow-2xl hover:bg-opacity-40 transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col items-center text-center group cursor-pointer">
+              <div class="bg-white p-4 rounded-full mb-6 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <i data-lucide="Star" class="w-8 h-8 text-primary"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3">Karatê-Dô (空手道)</h3>
+              <p class="text-gray-600 leading-relaxed text-sm">undefined</p>
+            </div>
+          
+            <div class="bg-secondary bg-opacity-20 rounded-2xl p-8 shadow-sm hover:shadow-2xl hover:bg-opacity-40 transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 flex flex-col items-center text-center group cursor-pointer">
+              <div class="bg-white p-4 rounded-full mb-6 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <i data-lucide="Star" class="w-8 h-8 text-primary"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-3">Kenshidō (剣士道)</h3>
+              <p class="text-gray-600 leading-relaxed text-sm">undefined</p>
+            </div>
+          
+        </div>
+      </div>
+    </section>
+  
+    <section id="grade" class="py-24 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-extrabold text-primary mb-4">Grade de Horários</h2>
+          <div class="w-24 h-1 bg-primary mx-auto rounded"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 font-bold text-sm rounded-full">Seg/Qua/Sex</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Melhor Idade</h3>
+            <div class="flex items-center text-primary font-bold">
+              <i data-lucide="clock" class="w-5 h-5 mr-2"></i> 07:00 às 08:00
+            </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 font-bold text-sm rounded-full">Seg/Qua/Sex</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Treino Kids</h3>
+            <div class="flex items-center text-primary font-bold">
+              <i data-lucide="clock" class="w-5 h-5 mr-2"></i> 08:00 às 09:00
+            </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 font-bold text-sm rounded-full">Seg/Qua/Sex</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Treino Misto</h3>
+            <div class="flex items-center text-primary font-bold">
+              <i data-lucide="clock" class="w-5 h-5 mr-2"></i> 15:00 às 16:30
+            </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 font-bold text-sm rounded-full">Seg/Qua/Sex</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Karatê-terapia e Melhor Idade</h3>
+            <div class="flex items-center text-primary font-bold">
+              <i data-lucide="clock" class="w-5 h-5 mr-2"></i> 16:40 às 17:40
+            </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 font-bold text-sm rounded-full">Seg/Qua/Sex</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Treino Kids</h3>
+            <div class="flex items-center text-primary font-bold">
+              <i data-lucide="clock" class="w-5 h-5 mr-2"></i> 17:50 às 18:50
+            </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 font-bold text-sm rounded-full">Seg/Qua/Sex</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Treino Misto</h3>
+            <div class="flex items-center text-primary font-bold">
+              <i data-lucide="clock" class="w-5 h-5 mr-2"></i> 19:00 às 20:30
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section>
+  
+    <section id="planos" class="py-24 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-extrabold text-primary mb-4">Planos e Valores</h2>
+          <div class="w-24 h-1 bg-primary mx-auto rounded"></div>
+          <p class="mt-6 text-xl text-gray-600 max-w-2xl mx-auto">Escolha o plano ideal para seus objetivos.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          
+            <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-shadow overflow-hidden flex flex-col border border-gray-100 mt-0 md:mt-4 relative">
+              
+              <div class="p-8 pb-0">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">🥉 Plano Mensal (Test Drive)</h3>
+                <div class="flex justify-center items-baseline my-6">
+                  <span class="text-3xl font-extrabold text-gray-900">R$</span>
+                  <span class="text-5xl font-black text-gray-900 tracking-tight">149.90</span>
+                  <span class="text-gray-500 ml-1 font-medium">/mês</span>
+                </div>
+              </div>
+              <div class="p-8 pt-4 flex-1 flex flex-col">
+                <ul class="space-y-4 mb-8 flex-1">
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Acesso a 3 treinos por semana</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Acompanhamento padrão dos professores</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Uso livre dos vestiários e infraestrutura</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Taxa de matrícula cobrada à parte</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Avaliação física não inclusa</span>
+                    </li>
+                  
+                </ul>
+                <button onclick="openLeadModal()" class="w-full py-4 rounded-xl font-bold text-lg transition-all bg-gray-100 text-gray-900 hover:bg-gray-200">
+                  Começar Agora
+                </button>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-shadow overflow-hidden flex flex-col border border-2 border-primary transform md:-translate-y-4 relative">
+              <div class="bg-primary text-white text-center py-2 font-bold text-sm tracking-widest uppercase">Mais Escolhido</div>
+              <div class="p-8 pb-0">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">🥇 Plano Anual (Premium)</h3>
+                <div class="flex justify-center items-baseline my-6">
+                  <span class="text-3xl font-extrabold text-gray-900">R$</span>
+                  <span class="text-5xl font-black text-gray-900 tracking-tight">99.90</span>
+                  <span class="text-gray-500 ml-1 font-medium">/mês</span>
+                </div>
+              </div>
+              <div class="p-8 pt-4 flex-1 flex flex-col">
+                <ul class="space-y-4 mb-8 flex-1">
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Acesso Livre e Ilimitado a todos os dias e horários</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Zero Matrícula: Isenção total da taxa de adesão</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Avaliação Física Trimestral: 4 avaliações inclusas para medir seus resultados ao longo do ano</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Direito a Férias: Tranque seu plano por até 30 dias sem perder dinheiro</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Guest Pass: Traga um amigo para treinar de graça 1x ao mês</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Clube de Vantagens: Descontos em parceiros e eventos da Associação</span>
+                    </li>
+                  
+                </ul>
+                <button onclick="openLeadModal()" class="w-full py-4 rounded-xl font-bold text-lg transition-all bg-primary text-white hover:opacity-90 shadow-lg">
+                  Começar Agora
+                </button>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-shadow overflow-hidden flex flex-col border border-gray-100 mt-0 md:mt-4 relative">
+              
+              <div class="p-8 pb-0">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2 text-center">🥈 Plano Semestral (O Focado)</h3>
+                <div class="flex justify-center items-baseline my-6">
+                  <span class="text-3xl font-extrabold text-gray-900">R$</span>
+                  <span class="text-5xl font-black text-gray-900 tracking-tight">119.90</span>
+                  <span class="text-gray-500 ml-1 font-medium">/mês</span>
+                </div>
+              </div>
+              <div class="p-8 pt-4 flex-1 flex flex-col">
+                <ul class="space-y-4 mb-8 flex-1">
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Acesso Livre: Treine todos os dias da semana</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Zero Matrícula: Isenção total da taxa de adesão</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">1 Avaliação Física Inclusa no início do plano</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Acompanhamento padrão dos professores</span>
+                    </li>
+                  
+                    <li class="flex items-start">
+                      <i data-lucide="check" class="w-5 h-5 text-primary mr-3 flex-shrink-0 mt-0.5"></i>
+                      <span class="text-gray-600 font-medium">Uso livre dos vestiários e infraestrutura</span>
+                    </li>
+                  
+                </ul>
+                <button onclick="openLeadModal()" class="w-full py-4 rounded-xl font-bold text-lg transition-all bg-gray-100 text-gray-900 hover:bg-gray-200">
+                  Começar Agora
+                </button>
+              </div>
+            </div>
+            
+        </div>
+      </div>
+    </section>
+  
+    <section id="equipe" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-extrabold text-primary mb-4">Nossa Equipe</h2>
+          <div class="w-24 h-1 bg-primary mx-auto rounded"></div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          
+            <div class="group text-center">
+              <div class="relative w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden border-4 border-gray-50 shadow-lg group-hover:border-primary/20 transition-all duration-300">
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center"><i data-lucide="user" class="w-16 h-16 text-gray-400"></i></div>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-1">Shihan Marcos Ribeiro</h3>
+              <p class="text-primary font-bold tracking-wide uppercase text-sm mb-4">Professor / Mestre</p>
+              
+            </div>
+          
+        </div>
+      </div>
+    </section>
+  
+    </main>
+
+    
+    <footer class="bg-gray-900 pt-20 pb-10 border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+          <div class="md:col-span-5">
+            <h3 class="text-3xl font-extrabold text-white mb-6">Associação Ribeiro de Karatê (Karatê-Dô Kenshikai)</h3>
+            <p class="text-gray-400 mb-8 max-w-sm leading-relaxed">Transformando vidas através do esporte</p>
+          </div>
+          <div class="md:col-span-4">
+            <h4 class="text-white font-bold mb-6 text-lg tracking-wide uppercase">Contato</h4>
+            <ul class="space-y-4">
+              
+                <li>
+                  <a href="https://wa.me/5567991593131" target="_blank" class="text-gray-400 hover:text-primary transition-colors flex items-center">
+                    <i data-lucide="message-circle" class="w-5 h-5 mr-3"></i> 67991593131
+                  </a>
+                </li>
+              
+              
+                <li class="text-gray-400 flex items-start">
+                  <i data-lucide="map-pin" class="w-5 h-5 mr-3 mt-1 flex-shrink-0"></i>
+                  <span>Rua Bom Jesus, 584, Vila Nogueira<br/>Campo Grande / MS</span>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+        <div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-500 text-sm mb-4 md:mb-0">&copy; 2026 Associação Ribeiro de Karatê (Karatê-Dô Kenshikai). Todos os direitos reservados.</p>
+          <div class="flex space-x-6 text-gray-500">
+            <span>Desenvolvido com SenseiHub</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  
+
+    <!-- Lead Modal CTA -->
+    <div id="leadModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeLeadModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
+                    <button onclick="closeLeadModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 rounded-full">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                    <h3 class="text-2xl font-extrabold text-gray-900 mb-2">Dar o primeiro passo!</h3>
+                    <p class="text-gray-500 mb-6">Deixe seus dados e chamaremos no WhatsApp.</p>
+                    <form onsubmit="submitLead(event)">
+                        <input type="text" id="leadName" required placeholder="Seu Nome" class="w-full mb-4 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none" />
+                        <input type="tel" id="leadPhone" required placeholder="Seu WhatsApp" class="w-full mb-6 px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary outline-none" />
+                        <button type="submit" id="submitBtn" class="w-full bg-primary text-white font-bold py-4 rounded-xl flex justify-center items-center">
+                            Começar Agora <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        function openLeadModal() { document.getElementById('leadModal').classList.remove('hidden'); }
+        function closeLeadModal() { document.getElementById('leadModal').classList.add('hidden'); }
+        function submitLead(e) {
+            e.preventDefault();
+            document.getElementById('submitBtn').innerHTML = 'Enviando...';
+            setTimeout(() => {
+                alert('Obrigado! Entraremos em contato em breve.');
+                closeLeadModal();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
