@@ -11,6 +11,15 @@
   </head>
   <body>
     <div id="root"></div>
+    <div id="error-log" style="color:red;font-size:18px;padding:20px;font-family:sans-serif;font-weight:bold;"></div>
+    <script>
+      window.addEventListener('error', function(e) {
+        document.getElementById('error-log').innerText += e.message + '\n';
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        document.getElementById('error-log').innerText += e.reason + '\n';
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

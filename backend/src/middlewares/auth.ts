@@ -1,57 +1,43 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { AuthPayload } from '../services/auth.service';
+import { Role } from '@prisma/client';
 
-export interface JwtUserPayload {
-  id: number;
-  email: string;
-  name?: string;
+export interface AuthenticatedRequest extends Request {
+  user?: AuthPayload;
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtUserPayload;
-    }
-  }
-}
-
-export const JWT_SECRET = process.env.JWT_SECRET || 'gerador_certificado_super_secret_jwt_key_2026';
-
-/**
- * Middleware that validates the Bearer JWT token from Authorization header.
- * Attaches decoded user payload to req.user.
- * Returns HTTP 401 Unauthorized if token is missing or invalid.
- */
-export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
-
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Token não fornecido ou inválido'
-    });
+    res.status(401).json({ error: 'Token de autenticação não fornecido' });
     return;
   }
 
   const token = authHeader.split(' ')[1];
-
-  if (!token) {
-    res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Token não fornecido ou inválido'
-    });
-    return;
-  }
+  const secret = process.env.JWT_SECRET || 'fallback_secret';
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtUserPayload;
+    const decoded = jwt.verify(token, secret) as AuthPayload;
     req.user = decoded;
     next();
-  } catch {
-    res.status(401).json({
-      error: 'Unauthorized',
-      message: 'Token inválido ou expirado'
-    });
-    return;
+  } catch (error) {
+    res.status(401).json({ error: 'Token inválido ou expirado' });
   }
+};
+
+export const authorizeRole = (allowedRoles: Role[]) => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      res.status(401).json({ error: 'Usuário não autenticado' });
+      return;
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      res.status(403).json({ error: 'Acesso negado. Permissão insuficiente.' });
+      return;
+    }
+
+    next();
+  };
 };

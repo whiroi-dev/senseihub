@@ -17,122 +17,183 @@ enum Role {
   ALUNO
 }
 
-model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  password  String
-  role      Role      @default(ALUNO)
+model Dojo {
+  id                 String    @id @default(uuid())
+  name               String
+  president          String
+  cnpj               String?   @unique
   
-  // Auditing flags
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  defaultShihan      String?
+  defaultSensei      String?
+  defaultAssociation String?
+  logoPrimaryUrl     String?
+  logoSecondaryUrl   String?
+  
+  users              User[]
+  ranks              Rank[]
+  students           Student[]
 
-  // Relations
-  studentProfile Student?
-  createdStudents Student[] @relation("CreatedStudents")
-  updatedStudents Student[] @relation("UpdatedStudents")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById String?
+  updatedById String?
+  
+  createdByUser User? @relation("DojoCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedByUser User? @relation("DojoUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+model User {
+  id          String    @id @default(uuid())
+  dojoId      String
+  name        String
+  email       String    @unique
+  password    String
+  role        Role      @default(ALUNO)
+  
+  dojo        Dojo      @relation(fields: [dojoId], references: [id], onDelete: Restrict)
+  studentProfile Student? @relation("UserToStudent")
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  dojosCreated          Dojo[]            @relation("DojoCreatedBy")
+  dojosUpdated          Dojo[]            @relation("DojoUpdatedBy")
+  
+  ranksCreated          Rank[]            @relation("RankCreatedBy")
+  ranksUpdated          Rank[]            @relation("RankUpdatedBy")
+  
+  studentsCreated       Student[]         @relation("StudentCreatedBy")
+  studentsUpdated       Student[]         @relation("StudentUpdatedBy")
+  
+  attendancesCreated    Attendance[]      @relation("AttendanceCreatedBy")
+  attendancesUpdated    Attendance[]      @relation("AttendanceUpdatedBy")
+  
+  transfersCreated      TransferHistory[] @relation("TransferCreatedBy")
+  transfersUpdated      TransferHistory[] @relation("TransferUpdatedBy")
+  
+  certificatesCreated   Certificate[]     @relation("CertificateCreatedBy")
+  certificatesUpdated   Certificate[]     @relation("CertificateUpdatedBy")
 }
 
 model Rank {
-  id             Int       @id @default(autoincrement())
-  name           String    // e.g. "Faixa Branca (7º Kyu)"
-  color          String    // e.g. "#FFFFFF"
-  phrase         String    // Certificate motivational text
-  minHours       Int       @default(0) // Carga horária mínima
-  minDays        Int       @default(0) // Tempo mínimo de carência
-  sortOrder      Int       @default(0) // Hierarchy order
+  id          String    @id @default(uuid())
+  dojoId      String
+  name        String
+  color       String
+  phrase      String?
+  minHours    Int       @default(0)
+  minDays     Int       @default(0)
+  sortOrder   Int       @default(0)
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
+  dojo        Dojo      @relation(fields: [dojoId], references: [id], onDelete: Restrict)
+  students    Student[]
+  certificates Certificate[]
 
-  students       Student[]
-  certificates   Certificate[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdById String?
+  updatedById String?
+
+  createdByUser User?   @relation("RankCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedByUser User?   @relation("RankUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 model Student {
-  id                Int       @id @default(autoincrement())
+  id                String    @id @default(uuid())
+  dojoId            String
+  userId            String?   @unique
+  currentRankId     String?
   name              String
-  userId            Int?      @unique // Optional link to a login account
-  currentRankId     Int?
+  
+  birthDate         DateTime?
+  phone             String?
+  emergencyContact  String?
+  medicalNotes      String?
   
   hasFinancialDebts Boolean   @default(false)
   joinedAt          DateTime  @default(now())
 
-  // Auditing
-  createdByUserId   Int?
-  updatedByUserId   Int?
+  dojo              Dojo      @relation(fields: [dojoId], references: [id], onDelete: Restrict)
+  user              User?     @relation("UserToStudent", fields: [userId], references: [id], onDelete: SetNull)
+  currentRank       Rank?     @relation(fields: [currentRankId], references: [id], onDelete: Restrict)
+
+  attendances       Attendance[]
+  transferHistories TransferHistory[]
+  certificates      Certificate[]
+
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   deletedAt         DateTime?
-  
-  user              User?     @relation(fields: [userId], references: [id])
-  currentRank       Rank?     @relation(fields: [currentRankId], references: [id])
-  createdByUser     User?     @relation("CreatedStudents", fields: [createdByUserId], references: [id])
-  updatedByUser     User?     @relation("UpdatedStudents", fields: [updatedByUserId], references: [id])
+  createdById       String?
+  updatedById       String?
 
-  certificates      Certificate[]
-  attendances       Attendance[]
-  transferHistories TransferHistory[]
-}
-
-model TransferHistory {
-  id              Int       @id @default(autoincrement())
-  studentId       Int
-  originAcademy   String
-  previousSensei  String
-  rankAchieved    String    // The rank they came with
-  transferDate    DateTime
-
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  deletedAt       DateTime?
-
-  student         Student   @relation(fields: [studentId], references: [id])
+  createdByUser     User?   @relation("StudentCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedByUser     User?   @relation("StudentUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 model Attendance {
-  id              Int       @id @default(autoincrement())
-  studentId       Int
-  date            DateTime
-  hoursCredited   Float     @default(1.0)
-  notes           String?
+  id            String    @id @default(uuid())
+  studentId     String
+  date          DateTime
+  hoursCredited Float     @default(1.0)
+  notes         String?
+
+  student       Student   @relation(fields: [studentId], references: [id], onDelete: Restrict)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  createdById   String?
+  updatedById   String?
+
+  createdByUser User?   @relation("AttendanceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedByUser User?   @relation("AttendanceUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+}
+
+model TransferHistory {
+  id              String    @id @default(uuid())
+  studentId       String
+  originAcademy   String
+  previousSensei  String
+  rankAchieved    String
+  transferDate    DateTime
+
+  student         Student   @relation(fields: [studentId], references: [id], onDelete: Restrict)
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   deletedAt       DateTime?
+  createdById     String?
+  updatedById     String?
 
-  student         Student   @relation(fields: [studentId], references: [id])
+  createdByUser   User?   @relation("TransferCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedByUser   User?   @relation("TransferUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 }
 
 model Certificate {
-  id              Int       @id @default(autoincrement())
-  studentId       Int
-  rankId          Int
+  id              String    @id @default(uuid())
+  studentId       String
+  rankId          String
   
   associationName String
   shihanName      String
   presidentName   String
   issueDate       DateTime
   
-  // Validation hash for public URL QR Code
   validationHash  String    @unique @default(uuid())
 
-  // Auditing
+  student         Student   @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  rank            Rank      @relation(fields: [rankId], references: [id], onDelete: Restrict)
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   deletedAt       DateTime?
-  
-  student         Student   @relation(fields: [studentId], references: [id])
-  rank            Rank      @relation(fields: [rankId], references: [id])
-}
+  createdById     String?
+  updatedById     String?
 
-model Setting {
-  id        Int       @id @default(autoincrement())
-  key       String    @unique
-  value     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdByUser   User?   @relation("CertificateCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedByUser   User?   @relation("CertificateUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 }
