@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PROFESSOR
+  ALUNO
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  role      Role      @default(ALUNO)
+  
+  // Auditing flags
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // Relations
+  studentProfile Student?
+  createdStudents Student[] @relation("CreatedStudents")
+  updatedStudents Student[] @relation("UpdatedStudents")
+}
+
+model Rank {
+  id             Int       @id @default(autoincrement())
+  name           String    // e.g. "Faixa Branca (7º Kyu)"
+  color          String    // e.g. "#FFFFFF"
+  phrase         String    // Certificate motivational text
+  minHours       Int       @default(0) // Carga horária mínima
+  minDays        Int       @default(0) // Tempo mínimo de carência
+  sortOrder      Int       @default(0) // Hierarchy order
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  students       Student[]
+  certificates   Certificate[]
+}
+
+model Student {
+  id                Int       @id @default(autoincrement())
+  name              String
+  userId            Int?      @unique // Optional link to a login account
+  currentRankId     Int?
+  
+  hasFinancialDebts Boolean   @default(false)
+  joinedAt          DateTime  @default(now())
+
+  // Auditing
+  createdByUserId   Int?
+  updatedByUserId   Int?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+  
+  user              User?     @relation(fields: [userId], references: [id])
+  currentRank       Rank?     @relation(fields: [currentRankId], references: [id])
+  createdByUser     User?     @relation("CreatedStudents", fields: [createdByUserId], references: [id])
+  updatedByUser     User?     @relation("UpdatedStudents", fields: [updatedByUserId], references: [id])
+
+  certificates      Certificate[]
+  attendances       Attendance[]
+  transferHistories TransferHistory[]
+}
+
+model TransferHistory {
+  id              Int       @id @default(autoincrement())
+  studentId       Int
+  originAcademy   String
+  previousSensei  String
+  rankAchieved    String    // The rank they came with
+  transferDate    DateTime
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  student         Student   @relation(fields: [studentId], references: [id])
+}
+
+model Attendance {
+  id              Int       @id @default(autoincrement())
+  studentId       Int
+  date            DateTime
+  hoursCredited   Float     @default(1.0)
+  notes           String?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  student         Student   @relation(fields: [studentId], references: [id])
+}
+
+model Certificate {
+  id              Int       @id @default(autoincrement())
+  studentId       Int
+  rankId          Int
+  
+  associationName String
+  shihanName      String
+  presidentName   String
+  issueDate       DateTime
+  
+  // Validation hash for public URL QR Code
+  validationHash  String    @unique @default(uuid())
+
+  // Auditing
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+  
+  student         Student   @relation(fields: [studentId], references: [id])
+  rank            Rank      @relation(fields: [rankId], references: [id])
+}
+
+model Setting {
+  id        Int       @id @default(autoincrement())
+  key       String    @unique
+  value     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

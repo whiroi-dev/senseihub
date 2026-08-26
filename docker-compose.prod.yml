@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-cert_generator}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-cert_generator}?schema=public
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-PROD_gerador_certificado_super_secret_jwt_key}
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        # In production, Vite needs the public API URL built-in
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:3000}
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
