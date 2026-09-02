@@ -10,7 +10,8 @@ RUN apk add --no-cache \
       freetype \
       harfbuzz \
       ca-certificates \
-      ttf-freefont
+      ttf-freefont \
+      font-noto-cjk
 
 RUN npm install
 

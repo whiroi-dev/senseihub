@@ -19,6 +19,11 @@ export class DojoController {
           defaultAssociation: true,
           logoPrimaryUrl: true,
           logoSecondaryUrl: true,
+          city: true,
+          showShihanText: true,
+          showKanjiText: true,
+            diplomaBackground: true,
+            diplomaBackgroundImageUrl: true,
         },
       });
 
@@ -36,7 +41,7 @@ export class DojoController {
   async updateConfig(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const { dojoId, userId } = req.user!;
-      const { name, president, defaultShihan, defaultSensei, defaultAssociation } = req.body;
+      const { name, president, defaultShihan, defaultSensei, defaultAssociation, city, showShihanText, showKanjiText, diplomaBackground, diplomaBackgroundImageUrl } = req.body;
 
       const updated = await prisma.dojo.update({
         where: { id: dojoId },
@@ -46,6 +51,11 @@ export class DojoController {
           defaultShihan,
           defaultSensei,
           defaultAssociation,
+          city,
+          showShihanText: showShihanText ?? undefined,
+          showKanjiText: showKanjiText ?? undefined,
+          diplomaBackground: diplomaBackground ?? undefined,
+            diplomaBackgroundImageUrl: diplomaBackgroundImageUrl !== undefined ? diplomaBackgroundImageUrl : undefined,
           updatedById: userId,
         },
       });
@@ -66,17 +76,19 @@ export class DojoController {
         return;
       }
 
-      const validTypes = ['primary', 'secondary'];
+      const validTypes = ['primary', 'secondary', 'background'];
       if (!validTypes.includes(type)) {
-        res.status(400).json({ error: 'Tipo de logo inválido. Use primary ou secondary.' });
+        res.status(400).json({ error: 'Tipo de logo inválido. Use primary, secondary ou background.' });
         return;
       }
 
       const publicUrl = `/uploads/${req.file.filename}`;
       
       const updateData = type === 'primary' 
-        ? { logoPrimaryUrl: publicUrl, updatedById: userId }
-        : { logoSecondaryUrl: publicUrl, updatedById: userId };
+          ? { logoPrimaryUrl: publicUrl, updatedById: userId }
+          : type === 'secondary'
+          ? { logoSecondaryUrl: publicUrl, updatedById: userId }
+          : { diplomaBackgroundImageUrl: publicUrl, updatedById: userId };
 
       const updated = await prisma.dojo.update({
         where: { id: dojoId },

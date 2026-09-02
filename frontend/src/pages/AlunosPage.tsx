@@ -230,7 +230,7 @@ export const AlunosPage = () => {
                         <span className="px-2 py-1 bg-green-900/50 text-green-400 rounded text-xs border border-green-800">Regular</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">{new Date(student.joinedAt).toLocaleDateString('pt-BR')}</td>
+                    <td className="px-6 py-4">{new Date(student.joinedAt).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</td>
                   </tr>
                 ))}
                 {filteredData.length === 0 && (
@@ -288,7 +288,7 @@ export const AlunosPage = () => {
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Nascimento:</span>
-                        <span className="text-slate-200">{selectedStudent.birthDate ? new Date(selectedStudent.birthDate).toLocaleDateString('pt-BR') : 'Não informado'}</span>
+                        <span className="text-slate-200">{selectedStudent.birthDate ? new Date(selectedStudent.birthDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'Não informado'}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Telefone:</span>
@@ -296,7 +296,7 @@ export const AlunosPage = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Ingresso:</span>
-                        <span className="text-slate-200">{new Date(selectedStudent.joinedAt).toLocaleDateString('pt-BR')}</span>
+                        <span className="text-slate-200">{new Date(selectedStudent.joinedAt).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
                       </div>
                     </div>
                   </section>
@@ -333,7 +333,7 @@ export const AlunosPage = () => {
                             <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-3 rounded border border-slate-700 bg-slate-950 shadow flex justify-between items-center group-hover:border-slate-500 transition-colors">
                               <div>
                                 <div className="font-bold text-slate-200 text-sm mb-1">{cert.rank.name}</div>
-                                <div className="text-slate-500 text-xs">{new Date(cert.issueDate).toLocaleDateString('pt-BR')}</div>
+                                <div className="text-slate-500 text-xs">{new Date(cert.issueDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</div>
                               </div>
                               <button 
                                 onClick={() => handleDownloadCertificate(cert.id)}

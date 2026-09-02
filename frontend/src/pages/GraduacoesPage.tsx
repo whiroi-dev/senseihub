@@ -42,7 +42,7 @@ export const GraduacoesPage = () => {
   const filteredData = useMemo(() => {
     return data
       .filter((r) => r.name.toLowerCase().includes(search.toLowerCase()))
-      .sort((a, b) => a.name.localeCompare(b.name)); // Ordem alfabética padrão
+      .sort((a, b) => a.sortOrder - b.sortOrder);
   }, [data, search]);
 
   const openModal = (rank?: Rank) => {
@@ -163,6 +163,17 @@ export const GraduacoesPage = () => {
                   <label className="block text-sm text-slate-400 mb-1">Dias de Carência</label>
                   <input required type="number" value={formData.minDays} onChange={(e) => setFormData({ ...formData, minDays: Number(e.target.value) })} className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-white" />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm text-slate-400 mb-1">Frase Motivacional do Certificado</label>
+                <textarea 
+                  rows={3}
+                  placeholder="Ex: A pureza do início. A mente está vazia..." 
+                  value={formData.phrase} 
+                  onChange={(e) => setFormData({ ...formData, phrase: e.target.value })} 
+                  className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-white text-sm resize-none" 
+                />
+                <p className="text-xs text-slate-500 mt-1">Essa frase aparece em itálico no certificado</p>
               </div>
               <div className="flex justify-end gap-3 mt-6">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-slate-400 hover:text-slate-200">Cancelar</button>

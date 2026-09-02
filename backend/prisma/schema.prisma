@@ -28,6 +28,11 @@ model Dojo {
   defaultAssociation String?
   logoPrimaryUrl     String?
   logoSecondaryUrl   String?
+  city               String?
+  showShihanText     Boolean   @default(false)
+  showKanjiText      Boolean   @default(false)
+    diplomaBackground  String    @default("sunset")
+  diplomaBackgroundImageUrl String?
   
   users              User[]
   ranks              Rank[]

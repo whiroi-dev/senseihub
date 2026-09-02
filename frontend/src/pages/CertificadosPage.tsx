@@ -1,14 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
 import { api } from '../services/api';
 
-interface Rank { id: string; name: string; color: string; phrase?: string; }
-interface Student { id: string; name: string; currentRank?: Rank; }
+interface Rank { id: string; name: string; color: string; phrase?: string; sortOrder: number; }
+interface Student { id: string; name: string; currentRank?: Rank; currentRankId?: string; }
 interface DojoConfig {
   defaultAssociation?: string;
   defaultShihan?: string;
   president?: string;
   logoPrimaryUrl?: string;
   logoSecondaryUrl?: string;
+  city?: string;
+  showShihanText?: boolean;
+  showKanjiText?: boolean;
+    diplomaBackground?: string;
+    diplomaBackgroundImageUrl?: string | null;
 }
 
 export const CertificadosPage = () => {
@@ -28,6 +33,7 @@ export const CertificadosPage = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [overrideFilter, setOverrideFilter] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -50,10 +56,25 @@ export const CertificadosPage = () => {
   }, []);
 
   const filteredStudents = useMemo(() => {
+    if (!selectedRankId) return [];
+    
+    const targetRank = ranks.find(r => r.id === selectedRankId);
+    if (!targetRank) return [];
+
+    const sortedRanks = [...ranks].sort((a, b) => a.sortOrder - b.sortOrder);
+    const targetIndex = sortedRanks.findIndex(r => r.id === selectedRankId);
+    const previousRank = targetIndex > 0 ? sortedRanks[targetIndex - 1] : null;
+
     return students
-      .filter((s) => s.name.toLowerCase().includes(search.toLowerCase()))
+      .filter((s) => {
+        const matchName = s.name.toLowerCase().includes(search.toLowerCase());
+        const is2aVia = s.currentRankId === targetRank.id;
+        const isPromotion = s.currentRankId === previousRank?.id;
+        const isFirstRank = !s.currentRankId && targetIndex === 0;
+        return matchName && (overrideFilter || is2aVia || isPromotion || isFirstRank);
+      })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [students, search]);
+  }, [students, search, selectedRankId, ranks, overrideFilter]);
 
   const handleStudentSelect = async (studentId: string) => {
     if (selectedIds.has(studentId)) {
@@ -64,16 +85,18 @@ export const CertificadosPage = () => {
     }
 
     try {
-      const response = await api.get(`/eligibility/${studentId}`);
-      const result = response.data;
-
-      if (!result.isEligible) {
-        let msg = `O aluno está Inapto para exame de faixa!\nMotivo: ${result.reason}`;
-        if (result.hoursDeficit) msg += `\nDéficit de horas: ${result.hoursDeficit}h`;
-        if (result.eligibleFromDate) msg += `\nCarência encerra em: ${new Date(result.eligibleFromDate).toLocaleDateString('pt-BR')}`;
-        alert(msg);
-        return; 
-      }
+      if (!overrideFilter) {
+          const response = await api.get(`/eligibility/${studentId}`);
+          const result = response.data;
+  
+          if (!result.isEligible) {
+            let msg = `O aluno está Inapto para exame de faixa!\nMotivo: ${result.reason}`;
+            if (result.hoursDeficit) msg += `\nDéficit de horas: ${result.hoursDeficit}h`;
+            if (result.eligibleFromDate) msg += `\nCarência encerra em: ${new Date(result.eligibleFromDate).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}`;
+            alert(msg);
+            return; 
+          }
+        }
 
       const newSet = new Set(selectedIds);
       newSet.add(studentId);
@@ -129,10 +152,45 @@ export const CertificadosPage = () => {
   }
 
   const primaryColor = selectedRank?.color || '#1e293b'; // slate-800 as fallback
-  const formattedDate = formData.issueDate 
-    ? new Date(formData.issueDate).toLocaleDateString('pt-BR') 
-    : 'DD/MM/AAAA';
+  const isWhite = ['#ffffff', '#fff', '#fafafa', '#f8f9fa', '#f1f5f9', '#f3f4f6'].includes(primaryColor.toLowerCase());
+  
+  const elementColor = isWhite ? '#111827' : primaryColor;
+  const textColor = isWhite ? '#111827' : primaryColor;
+  const bgGradients: Record<string, string> = {
+            white: 'white',
+      sunset: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 40%, #fdba74 100%)',
+      golden: 'linear-gradient(135deg, #fef9c3 0%, #fef08a 40%, #fde047 100%)',
+      silver: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 40%, #94a3b8 100%)',
+      parchment: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 40%, #d9b382 100%)',
+      ruby: 'linear-gradient(135deg, #fee2e2 0%, #fecaca 40%, #f87171 100%)',
+      emerald: 'linear-gradient(135deg, #dcfce7 0%, #bbf7d0 40%, #4ade80 100%)',
+      sapphire: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 40%, #38bdf8 100%)',
+      platinum: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 40%, #64748b 100%)',
+      sakura: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 40%, #f472b6 100%)',
+      copper: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 40%, #fb923c 100%)',
+      amethyst: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 40%, #c084fc 100%)',
+      ocean: 'linear-gradient(135deg, #ccfbf1 0%, #99f6e4 40%, #2dd4bf 100%)',
+      sand: 'linear-gradient(135deg, #fef08a 0%, #fde047 40%, #eab308 100%)',
+      bamboo: 'linear-gradient(135deg, #ecfccb 0%, #d9f99d 40%, #a3e635 100%)'
+    };
+    
+    
+    let bgStyleValue = 'white';
+    if (selectedRank?.name.includes('Preta')) {
+      if (dojoConfig?.diplomaBackground === 'custom_image' && dojoConfig?.diplomaBackgroundImageUrl) {
+        bgStyleValue = `url('${dojoConfig.diplomaBackgroundImageUrl.startsWith('http') ? dojoConfig.diplomaBackgroundImageUrl : 'http://localhost:3000' + dojoConfig.diplomaBackgroundImageUrl}') center/cover no-repeat`;
+      } else if (dojoConfig?.diplomaBackground) {
+        bgStyleValue = bgGradients[dojoConfig.diplomaBackground] || 'white';
+      }
+    }
+    const formattedDate = formData.issueDate 
+    ? `${dojoConfig?.city ? dojoConfig.city + ', ' : ''}${new Date(formData.issueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' })}` 
+    : 'Cidade, DD de mês de AAAA';
 
+    const sortedRanksForRender = [...ranks].sort((a, b) => a.sortOrder - b.sortOrder);
+  const targetIndexForRender = sortedRanksForRender.findIndex(r => r.id === selectedRankId);
+  const previousRankForRender = targetIndexForRender > 0 ? sortedRanksForRender[targetIndexForRender - 1] : null;
+  
   return (
     <div className="space-y-6 h-full flex flex-col">
       <div className="flex justify-between items-center shrink-0">
@@ -170,8 +228,9 @@ export const CertificadosPage = () => {
 
               {/* Input de Busca */}
               <input 
-                type="text" 
-                placeholder={selectedIds.size === 0 ? "Buscar e selecionar aluno..." : "Adicionar outro aluno..."}
+                  type="text" 
+                  disabled={!selectedRankId}
+                  placeholder={!selectedRankId ? "Selecione uma faixa acima primeiro..." : selectedIds.size === 0 ? "Buscar aluno elegível..." : "Adicionar outro aluno..."}
                 value={search} 
                 onChange={e => setSearch(e.target.value)}
                 onFocus={() => setIsDropdownOpen(true)}
@@ -182,25 +241,37 @@ export const CertificadosPage = () => {
               {/* Dropdown de Resultados da Busca */}
               {isDropdownOpen && (
                 <div className="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto bg-slate-800 border border-slate-700 rounded-lg shadow-2xl custom-scrollbar">
-                  {filteredStudents.length > 0 ? filteredStudents.map((student) => (
-                    <div 
-                      key={student.id} 
-                      onClick={() => {
-                        if (!selectedIds.has(student.id)) handleStudentSelect(student.id);
-                        setSearch('');
-                        setIsDropdownOpen(false);
-                      }} 
-                      className="flex items-center justify-between px-4 py-3 cursor-pointer border-b border-slate-700/50 last:border-0 hover:bg-slate-700 transition-colors"
-                    >
-                      <div>
-                        <div className="text-sm font-medium text-slate-200">{student.name}</div>
-                        <div className="text-xs text-slate-400">Faixa Atual: {student.currentRank?.name || 'Iniciante'}</div>
+                  {filteredStudents.length > 0 ? filteredStudents.map((student) => {
+                      const isPromotion = student.currentRankId !== selectedRankId;
+                      const isBypass = overrideFilter && student.currentRankId !== selectedRankId && student.currentRankId !== previousRankForRender?.id && !(!student.currentRankId && targetIndexForRender === 0);
+                      return (
+                      <div 
+                        key={student.id} 
+                        onClick={() => {
+                          if (!selectedIds.has(student.id)) handleStudentSelect(student.id);
+                          setSearch('');
+                          setIsDropdownOpen(false);
+                        }} 
+                        className="flex items-center justify-between px-4 py-3 cursor-pointer border-b border-slate-700/50 last:border-0 hover:bg-slate-700 transition-colors"
+                      >
+                        <div>
+                          <div className="text-sm font-medium text-slate-200 flex items-center gap-2">
+                            {student.name}
+                            {isBypass ? (
+                              <span className="bg-orange-900/50 text-orange-400 border border-orange-800 text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider">SALTO DE FAIXA</span>
+                            ) : isPromotion ? (
+                              <span className="bg-green-900/50 text-green-400 border border-green-800 text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider">PROMOVENDO</span>
+                            ) : (
+                              <span className="bg-slate-700 text-slate-300 border border-slate-600 text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider">2ª VIA</span>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-400 mt-1">Faixa Atual: {student.currentRank?.name || 'Sem Faixa'}</div>
+                        </div>
+                        {selectedIds.has(student.id) && <span className="text-red-400 text-xs font-bold">Adicionado</span>}
                       </div>
-                      {selectedIds.has(student.id) && <span className="text-red-400 text-xs font-bold">Adicionado</span>}
-                    </div>
-                  )) : (
-                    <div className="px-4 py-3 text-sm text-slate-400">Nenhum aluno encontrado.</div>
-                  )}
+                    )}) : (
+                      <div className="px-4 py-3 text-sm text-slate-400">Nenhum aluno elegível encontrado.</div>
+                    )}
                 </div>
               )}
             </div>
@@ -217,6 +288,17 @@ export const CertificadosPage = () => {
               <div>
                 <label className="block text-xs text-slate-500 mb-1">Associação Responsável</label>
                 <input type="text" value={formData.associationName} onChange={e => setFormData({...formData, associationName: e.target.value})} className="w-full bg-slate-900/50 border border-slate-800 rounded px-3 py-2 text-sm text-slate-300 focus:border-slate-600 outline-none" />
+              </div>
+
+              {/* Hint */}
+              <div className="flex items-center justify-between mt-1 mb-4">
+                <div className="text-[11px] text-slate-500 italic">
+                  Não encontrou um aluno? Verifique os requisitos na <a href="/alunos" className="text-red-400 hover:underline">Gestão de Alunos</a>.
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={overrideFilter} onChange={e => setOverrideFilter(e.target.checked)} className="accent-red-500 rounded bg-slate-900 border-slate-700" />
+                  <span className="text-[11px] font-bold text-slate-400 uppercase">Modo Admin (Ignorar Trava)</span>
+                </label>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -258,23 +340,51 @@ export const CertificadosPage = () => {
 
           {/* Container do Certificado */}
           <div 
-            className="w-full bg-white text-slate-900 shadow-2xl relative select-none flex flex-row font-sans"
+            className="w-full text-slate-900 shadow-2xl relative select-none flex flex-row font-sans"
             style={{ 
-              aspectRatio: '1.414 / 1',
-              border: `clamp(8px, 2.5cqw, 30px) solid ${primaryColor}`,
-              boxShadow: `0 25px 50px -12px ${primaryColor}40`
-            }}
+                aspectRatio: '1.414 / 1',
+                background: bgStyleValue,
+                border: `clamp(8px, 2.5cqw, 30px) solid ${primaryColor}`,
+                boxShadow: `0 25px 50px -12px ${primaryColor}40`
+              }}
           >
             {/* Coluna Esquerda: Logos */}
-            <div className="w-[30%] flex flex-col items-center justify-around border-r-2 border-slate-200 p-[2cqw] shrink-0">
-              {dojoConfig?.logoPrimaryUrl ? (
-                <img src={dojoConfig.logoPrimaryUrl.startsWith('http') ? dojoConfig.logoPrimaryUrl : `http://localhost:3000${dojoConfig.logoPrimaryUrl}`} alt="Logo Primária" className="max-w-[95%] max-h-[40%] object-contain" />
-              ) : (
-                <div className="w-[10cqw] h-[10cqw] rounded-full border border-dashed border-gray-400 flex items-center justify-center text-[1.5cqw] text-gray-400">Logo 1</div>
-              )}
+            <div className={`w-[30%] flex flex-col items-center ${dojoConfig?.logoSecondaryUrl ? 'justify-between' : 'justify-center'} ${selectedRank?.name.includes('Preta') ? '' : 'border-r-2 border-slate-200'} p-[2cqw] pb-[4cqw] shrink-0 h-full relative`}>
+              
+              <div className="w-full flex flex-col items-center">
+                {dojoConfig?.logoPrimaryUrl ? (
+                  <img src={dojoConfig.logoPrimaryUrl.startsWith('http') ? dojoConfig.logoPrimaryUrl : `http://localhost:3000${dojoConfig.logoPrimaryUrl}`} alt="Logo Primária" className="w-[85%] object-contain shrink-0" />
+                ) : (
+                  <div className="w-[10cqw] h-[10cqw] rounded-full border border-dashed border-gray-400 flex items-center justify-center text-[1.5cqw] text-gray-400 shrink-0">Logo 1</div>
+                )}
+
+                <div className="text-center w-full mt-[1cqw]">
+                  {dojoConfig?.showShihanText && (
+                    <div className="font-bold text-black leading-tight whitespace-nowrap mt-[1cqw]" style={{ fontSize: '1.6cqw' }}>
+                      Shihan: <span className="text-red-600">
+                        {formData.shihanName ? `${formData.shihanName.split(' ')[0]} ${formData.shihanName.split(' ').length > 1 ? formData.shihanName.split(' ').pop() : ''}` : ''}
+                      </span>
+                    </div>
+                  )}
+                  {dojoConfig?.showKanjiText && (
+                    <div className="flex justify-center gap-[6cqw] w-full mt-[3cqw] text-black font-bold" style={{ fontSize: '4.5cqw', lineHeight: 1.1 }}>
+                      <div className="flex flex-col">
+                        <span>{'\u62F3'}</span>
+                        <span>{'\u5FD7'}</span>
+                        <span>{'\u4F1A'}</span>
+                      </div>
+                      <div className="flex flex-col">
+                        <span>{'\u7A7A'}</span>
+                        <span>{'\u624B'}</span>
+                        <span>{'\u9053'}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
               
               {dojoConfig?.logoSecondaryUrl && (
-                <img src={dojoConfig.logoSecondaryUrl.startsWith('http') ? dojoConfig.logoSecondaryUrl : `http://localhost:3000${dojoConfig.logoSecondaryUrl}`} alt="Logo Secundária" className="max-w-[95%] max-h-[40%] object-contain mt-[2cqw]" />
+                <img src={dojoConfig.logoSecondaryUrl.startsWith('http') ? dojoConfig.logoSecondaryUrl : `http://localhost:3000${dojoConfig.logoSecondaryUrl}`} alt="Logo Secundária" className="max-w-[95%] max-h-[25%] object-contain mt-auto" />
               )}
             </div>
 
@@ -301,7 +411,7 @@ export const CertificadosPage = () => {
                   {previewStudentName}
                 </p>
                 <p className="text-gray-700 m-0" style={{ fontSize: '1.6cqw' }}>em vista de sua aprovação na categoria de</p>
-                <p className="font-bold my-[1cqw] transition-colors" style={{ color: primaryColor, fontSize: '2.8cqw' }}>
+                <p className="font-bold my-[1cqw] transition-colors" style={{ color: textColor, fontSize: '2.8cqw' }}>
                   {selectedRank?.name || 'Faixa Alvo'}
                 </p>
                 <p className="text-gray-700 m-0" style={{ fontSize: '1.5cqw' }}>
@@ -320,29 +430,27 @@ export const CertificadosPage = () => {
               {/* Assinaturas */}
               <div className="w-full flex justify-between items-start text-center pt-[2cqw]">
                 <div className="w-[30%]">
-                  <div className="border-t-2 w-[80%] mx-auto mb-[1cqw]" style={{ borderColor: primaryColor }}></div>
-                  <p className="font-bold text-gray-800 m-0 truncate px-1" style={{ fontSize: '1.2cqw' }}>{formData.presidentName || 'Presidente'}</p>
+                  <div className="border-t-2 w-[80%] mx-auto mb-[1cqw]" style={{ borderColor: elementColor }}></div>
+                  <p className="font-bold text-gray-800 m-0 px-1" style={{ fontSize: '1.2cqw' }}>{formData.presidentName || 'Presidente'}</p>
                   <p className="text-gray-600 m-0" style={{ fontSize: '1cqw' }}>Presidente da Associação</p>
                 </div>
                 
                 <div className="w-[30%]">
-                  <div className="border-t-2 w-[80%] mx-auto mb-[1cqw]" style={{ borderColor: primaryColor }}></div>
-                  <p className="font-bold text-gray-800 m-0 truncate px-1" style={{ fontSize: '1.2cqw' }}>{previewStudentName === '[ Lote de Alunos ]' || previewStudentName.includes('Alunos ]') ? 'Nome do Aluno' : previewStudentName}</p>
+                  <div className="border-t-2 w-[80%] mx-auto mb-[1cqw]" style={{ borderColor: elementColor }}></div>
+                  <p className="font-bold text-gray-800 m-0 px-1" style={{ fontSize: '1.2cqw' }}>{previewStudentName === '[ Lote de Alunos ]' || previewStudentName.includes('Alunos ]') ? 'Nome do Aluno' : previewStudentName}</p>
                   <p className="text-gray-600 m-0" style={{ fontSize: '1cqw' }}>Aluno(a)</p>
                 </div>
 
                 <div className="w-[30%]">
-                  <div className="border-t-2 w-[80%] mx-auto mb-[1cqw]" style={{ borderColor: primaryColor }}></div>
-                  <p className="font-bold text-gray-800 m-0 truncate px-1" style={{ fontSize: '1.2cqw' }}>{formData.shihanName || 'Shihan'}</p>
+                  <div className="border-t-2 w-[80%] mx-auto mb-[1cqw]" style={{ borderColor: elementColor }}></div>
+                  <p className="font-bold text-gray-800 m-0 px-1" style={{ fontSize: '1.2cqw' }}>{formData.shihanName || 'Shihan'}</p>
                   <p className="text-gray-600 m-0" style={{ fontSize: '1cqw' }}>Diretor Técnico</p>
                 </div>
               </div>
 
             </div>
             
-            <div className="absolute bottom-[1cqw] left-[2cqw] text-gray-400 font-mono" style={{ fontSize: '1cqw' }}>
-              Validação: 00000000-0000-0000-0000-000000000000
-            </div>
+            
 
           </div>
         </div>
